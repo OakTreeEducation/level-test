@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>雅思課程程度檢測 - 官方 LINE 版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script charset="utf-8" src="https://static.line-scdn.net/liff/edge/2/sdk.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
+        body { font-family: 'Inter', 'Microsoft JhengHei', sans-serif; }
+        .section-card { background: white; padding: 1.5rem; border-radius: 1rem; border: 1px solid #f3f4f6; box-shadow: 0 1px 3px rgba(0,0,0,0.1); margin-bottom: 1.5rem; }
+        .question-title { font-weight: 600; margin-bottom: 0.5rem; font-size: 0.95rem; color: #374151; }
+        .option-label { display: flex; align-items: center; gap: 0.5rem; border: 1px solid #e5e7eb; padding: 0.75rem; border-radius: 0.5rem; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
+        .option-label:hover { background-color: #f9fafb; border-color: #3b82f6; }
+        input[type="radio"]:checked + span { color: #2563eb; font-weight: 600; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen pb-12">
+
+    <!-- Header -->
+    <div class="bg-white border-b shadow-sm p-4 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex justify-between items-center">
+            <div>
+                <h1 class="text-xl font-bold text-green-600">IELTS 程度檢測</h1>
+                <p class="text-[10px] text-gray-400">Listening / Reading / Writing</p>
+            </div>
+            <div id="timer" class="text-red-500 font-mono text-xl font-bold">20:00</div>
+        </div>
+    </div>
+
+    <div class="max-w-4xl mx-auto p-4 mt-2">
+        <div id="liff-status" class="mb-4 text-center text-[10px] text-gray-400">正在確認 LINE 連線狀態...</div>
+        
+        <form id="quizForm">
+            <!-- Part 1: Listening (5 題) -->
+            <section class="section-card">
+                <h2 class="text-lg font-bold mb-4 flex items-center text-blue-700">
+                    <span class="bg-blue-100 p-1 rounded mr-2">🎧</span> 第一部分：聽力
+                </h2>
+                
+                <div class="mb-6">
+                    <button type="button" onclick="speak('Hello, this is the City Library. We are calling to confirm your reservation for the study room. You have booked Room 3 0 2 for this Wednesday, which is the 15th of March.')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm mb-4 hover:bg-blue-700">🔊 播放錄音 A</button>
+                    <div class="grid gap-4">
+                        <div>
+                            <p class="question-title">1. 預約的房間號碼為何？</p>
+                            <input type="text" id="ans_q1" class="w-full border p-2 rounded-md outline-none focus:border-blue-500">
+                        </div>
+                        <div>
+                            <p class="question-title">2. 預約的日期是幾號？</p>
+                            <input type="text" id="ans_q2" placeholder="數字即可" class="w-full border p-2 rounded-md outline-none">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="border-t pt-6">
+                    <button type="button" onclick="speak('Our recent survey suggests that face-to-face interaction is still vital for creative projects.')" class="bg-blue-600 text-white px-4 py-2 rounded-lg text-sm mb-4">🔊 播放錄音 B</button>
+                    <div class="space-y-4">
+                        <div>
+                            <p class="question-title">3. 錄音中提到什麼對於創意專案是「Vital」(至關重要的)？</p>
+                            <label class="option-label"><input type="radio" name="q3" value="wrong"><span>Digital tools</span></label>
+                            <label class="option-label"><input type="radio" name="q3" value="correct"><span>Face-to-face interaction</span></label>
+                        </div>
+                        <div>
+                            <p class="question-title">4. "Vital" 的同義詞為何？</p>
+                            <label class="option-label"><input type="radio" name="q4" value="correct"><span>Essential</span></label>
+                            <label class="option-label"><input type="radio" name="q4" value="wrong"><span>Optional</span></label>
+                        </div>
+                        <div>
+                            <p class="question-title">5. 根據錄音，說話者強調的是？</p>
+                            <label class="option-label"><input type="radio" name="q5" value="correct"><span>溝通的重要性</span></label>
+                            <label class="option-label"><input type="radio" name="q5" value="wrong"><span>硬體設備的升級</span></label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Part 2: Reading (5 題) -->
+            <section class="section-card">
+                <h2 class="text-lg font-bold mb-4 flex items-center text-green-700">
+                    <span class="bg-green-100 p-1 rounded mr-2">📖</span> 第二部分：閱讀
+                </h2>
+                <div class="bg-green-50 p-4 rounded-lg mb-6 text-sm leading-relaxed text-gray-700">
+                    <strong>Urbanization:</strong> By 2050, it is estimated that 68% of the world population will live in urban areas. This shift presents significant challenges for housing but also offers opportunities for efficient resource management.
+                </div>
+                <div class="space-y-6">
+                    <div>
+                        <p class="question-title">6. 2050年預計有多少人口住在城市？</p>
+                        <input type="text" id="ans_q6" class="w-full border p-2 rounded-md outline-none">
+                    </div>
+                    <div>
+                        <p class="question-title">7. 文章提到的主要挑戰為何？</p>
+                        <label class="option-label"><input type="radio" name="q7" value="correct"><span>Housing (住房)</span></label>
+                        <label class="option-label"><input type="radio" name="q7" value="wrong"><span>Internet (網路)</span></label>
+                    </div>
+                    <div>
+                        <p class="question-title">8. "Accelerating" 的含義是？</p>
+                        <label class="option-label"><input type="radio" name="q8" value="correct"><span>Moving faster</span></label>
+                        <label class="option-label"><input type="radio" name="q8" value="wrong"><span>Stopping slowly</span></label>
+                    </div>
+                    <div>
+                        <p class="question-title">9. 城市化帶來的機會包含：</p>
+                        <label class="option-label"><input type="radio" name="q9" value="correct"><span>資源管理有效化</span></label>
+                        <label class="option-label"><input type="radio" name="q9" value="wrong"><span>減少交通需求</span></label>
+                    </div>
+                    <div>
+                        <p class="question-title">10. 本段文字的主要目的是？</p>
+                        <label class="option-label"><input type="radio" name="q10" value="correct"><span>簡述城市化趨勢</span></label>
+                        <label class="option-label"><input type="radio" name="q10" value="wrong"><span>教導如何搬家</span></label>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Part 3: Writing (5 題) -->
+            <section class="section-card">
+                <h2 class="text-lg font-bold mb-4 flex items-center text-orange-700">
+                    <span class="bg-orange-100 p-1 rounded mr-2">✍️</span> 第三部分：造句與語法
+                </h2>
+                <div class="space-y-6">
+                    <div>
+                        <p class="question-title">11. 重組：[is / smoking / allowed / not / here]</p>
+                        <input type="text" id="ans_q11" class="w-full border p-2 rounded-md outline-none text-sm">
+                    </div>
+                    <div>
+                        <p class="question-title">12. 改寫為被動語態： "They built this house."</p>
+                        <input type="text" id="ans_q12" placeholder="This house..." class="w-full border p-2 rounded-md outline-none text-sm">
+                    </div>
+                    <div>
+                        <p class="question-title">13. 選擇正確選項：She ______ to London twice already.</p>
+                        <label class="option-label"><input type="radio" name="q13" value="correct"><span>has been</span></label>
+                        <label class="option-label"><input type="radio" name="q13" value="wrong"><span>went</span></label>
+                    </div>
+                    <div>
+                        <p class="question-title">14. 合併句子： "He was tired. He finished the work." (使用 Although)</p>
+                        <input type="text" id="ans_q14" class="w-full border p-2 rounded-md outline-none text-sm">
+                    </div>
+                    <div>
+                        <p class="question-title">15. 語法糾錯： He (A)<u>study</u> (B)<u>English</u> (C)<u>every</u> (D)<u>day</u>.</p>
+                        <div class="flex gap-4">
+                            <label><input type="radio" name="q15" value="correct"> A (應該是 studies)</label>
+                            <label><input type="radio" name="q15" value="wrong"> B</label>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div id="submit-loading" class="hidden text-center text-blue-600 font-bold mb-4 animate-pulse">正在彙整得分並傳送至對話框...</div>
+
+            <button type="button" id="submit-btn" onclick="submitToLine()" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl shadow-lg hover:bg-green-700 transition">
+                提交測驗
+            </button>
+        </form>
+    </div>
+
+    <!-- Result Modal -->
+    <div id="resultModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-[100]">
+        <div class="bg-white p-8 rounded-3xl max-w-lg w-full text-center shadow-2xl">
+            <div class="text-6xl mb-4">✅</div>
+            <h3 class="text-2xl font-bold mb-2">測驗完成！</h3>
+            <p class="text-gray-500 mb-6 text-sm">您的測驗結果與詳細回答已發送到官方 LINE 對話中，顧問將稍後與您聯繫。</p>
+            <button onclick="liff.closeWindow()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">回到 LINE</button>
+        </div>
+    </div>
+
+    <script>
+        // --- Timer ---
+        let timeLeft = 1200;
+        const timerEl = document.getElementById('timer');
+        const timerInterval = setInterval(() => {
+            const min = Math.floor(timeLeft / 60);
+            const sec = timeLeft % 60;
+            timerEl.textContent = `${min < 10 ? '0' : ''}${min}:${sec < 10 ? '0' : ''}${sec}`;
+            if (timeLeft-- <= 0) { clearInterval(timerInterval); submitToLine(); }
+        }, 1000);
+
+        // --- LIFF ---
+        async function initLiff() {
+            try {
+                await liff.init({ liffId: "YOUR_LIFF_ID" });
+                if (!liff.isLoggedIn()) liff.login();
+                document.getElementById('liff-status').innerText = "LINE 已連線";
+            } catch (e) {
+                document.getElementById('liff-status').innerText = "請在 LINE App 中開啟";
+            }
+        }
+        initLiff();
+
+        function speak(t) {
+            window.speechSynthesis.cancel();
+            const u = new SpeechSynthesisUtterance(t);
+            u.lang = 'en-US';
+            window.speechSynthesis.speak(u);
+        }
+
+        async function submitToLine() {
+            clearInterval(timerInterval);
+            document.getElementById('submit-btn').disabled = true;
+            document.getElementById('submit-loading').classList.remove('hidden');
+
+            let score = 0;
+            const answers = [];
+
+            // 聽力 1-5
+            const a1 = document.getElementById('ans_q1').value;
+            if(a1.includes("302")) score++;
+            const a2 = document.getElementById('ans_q2').value;
+            if(a2.includes("15")) score++;
+            const a3 = document.querySelector('input[name="q3"]:checked')?.value;
+            if(a3 === 'correct') score++;
+            const a4 = document.querySelector('input[name="q4"]:checked')?.value;
+            if(a4 === 'correct') score++;
+            const a5 = document.querySelector('input[name="q5"]:checked')?.value;
+            if(a5 === 'correct') score++;
+
+            // 閱讀 6-10
+            const a6 = document.getElementById('ans_q6').value;
+            if(a6.includes("68")) score++;
+            const a7 = document.querySelector('input[name="q7"]:checked')?.value;
+            if(a7 === 'correct') score++;
+            const a8 = document.querySelector('input[name="q8"]:checked')?.value;
+            if(a8 === 'correct') score++;
+            const a9 = document.querySelector('input[name="q9"]:checked')?.value;
+            if(a9 === 'correct') score++;
+            const a10 = document.querySelector('input[name="q10"]:checked')?.value;
+            if(a10 === 'correct') score++;
+
+            // 造句 11-15
+            const a11 = document.getElementById('ans_q11').value;
+            if(a11.toLowerCase().includes("smoking is not allowed")) score++;
+            const a12 = document.getElementById('ans_q12').value;
+            if(a12.toLowerCase().includes("was built")) score++;
+            const a13 = document.querySelector('input[name="q13"]:checked')?.value;
+            if(a13 === 'correct') score++;
+            const a14 = document.getElementById('ans_q14').value;
+            if(a14.toLowerCase().includes("although")) score++;
+            const a15 = document.querySelector('input[name="q15"]:checked')?.value;
+            if(a15 === 'correct') score++;
+
+            const profile = liff.isInClient() ? await liff.getProfile() : { displayName: "學員" };
+            
+            const message = `
+📊 雅思程度檢測結果
+-----------------------
+學員：${profile.displayName}
+測驗總得分：${score} / 15
+-----------------------
+【各部分得分】
+🎧 聽力：${(a1+a2+a3+a4+a5).length > 0 ? "已答" : "未答"}
+📖 閱讀：${(a6+a7+a8+a9+a10).length > 0 ? "已答" : "未答"}
+✍️ 造句：${(a11+a12+a13+a14+a15).length > 0 ? "已答" : "未答"}
+-----------------------
+💡 詳細答題內容已記錄在系統後台，顧問將盡快與您聯繫進行課程規劃。
+            `;
+
+            if (liff.isInClient()) {
+                await liff.sendMessages([{ type: 'text', text: message }]);
+            }
+
+            document.getElementById('submit-loading').classList.add('hidden');
+            document.getElementById('resultModal').classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
